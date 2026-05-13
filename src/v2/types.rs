@@ -3,6 +3,7 @@ use std::collections::HashMap;
 
 pub const DEFAULT_BASE_URL: &str = "https://sourcify.dev/server";
 
+/// Sourcify's verification match quality.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum MatchLevel {
@@ -13,6 +14,11 @@ pub enum MatchLevel {
     ExactMatch,
 }
 
+/// Verified contract data returned by `GET /v2/contract/{chainId}/{address}`.
+///
+/// The v2 endpoint can return many fields depending on the `fields` query
+/// parameter. Frequently used fields are typed, while unknown or less-common
+/// fields are preserved in [`Contract::extra`].
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Contract {
@@ -39,16 +45,19 @@ pub struct Contract {
 }
 
 impl Contract {
+    /// Returns true when Sourcify reported any match for this contract.
     pub fn is_verified(&self) -> bool {
         self.r#match.is_some()
     }
 }
 
+/// A source file returned by Sourcify.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SourceFile {
     pub content: String,
 }
 
+/// Compiler and contract identity information.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Compilation {
@@ -61,6 +70,7 @@ pub struct Compilation {
     pub settings: Option<serde_json::Value>,
 }
 
+/// Deployment transaction information when available.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Deployment {
@@ -74,6 +84,7 @@ pub struct AllChainsResponse {
     pub results: Vec<ContractSummary>,
 }
 
+/// Compact contract verification data returned by all-chain lookup.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ContractSummary {
@@ -84,4 +95,73 @@ pub struct ContractSummary {
     pub address: String,
     pub verified_at: Option<String>,
     pub match_id: Option<String>,
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn deserializes_contract_response() {
+        let contract: Contract = serde_json::from_str(
+            r#"{
+                "match": "exact_match",
+                "creationMatch": "match",
+                "runtimeMatch": "match",
+                "chainId": "1",
+                "address": "0x0000000000000000000000000000000000000000",
+                "verifiedAt": "2024-07-24T12:00:00Z",
+                "matchId": "42",
+                "sources": {
+                    "src/Counter.sol": { "content": "contract Counter {}" }
+                },
+                "abi": [{ "type": "function", "name": "count" }],
+                "compilation": {
+                    "language": "Solidity",
+                    "compiler": "solc",
+                    "compilerVersion": "0.8.24",
+                    "name": "Counter",
+                    "fullyQualifiedName": "src/Counter.sol:Counter"
+                },
+                "unexpectedField": true
+            }"#,
+        )
+        .unwrap();
+
+        assert!(contract.is_verified());
+        assert_eq!(contract.r#match, Some(MatchLevel::ExactMatch));
+        assert_eq!(
+            contract.compilation.unwrap().compiler_name.as_deref(),
+            Some("solc")
+        );
+        assert_eq!(
+            contract
+                .sources
+                .unwrap()
+                .get("src/Counter.sol")
+                .unwrap()
+                .content,
+            "contract Counter {}"
+        );
+        assert_eq!(
+            contract.extra.get("unexpectedField"),
+            Some(&serde_json::json!(true))
+        );
+    }
+
+    #[test]
+    fn deserializes_unverified_contract_response() {
+        let contract: Contract = serde_json::from_str(
+            r#"{
+                "match": null,
+                "creationMatch": null,
+                "runtimeMatch": null,
+                "chainId": "1",
+                "address": "0x0000000000000000000000000000000000000000"
+            }"#,
+        )
+        .unwrap();
+
+        assert!(!contract.is_verified());
+    }
 }

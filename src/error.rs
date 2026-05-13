@@ -1,7 +1,9 @@
 use thiserror::Error;
 
+/// The crate-wide result type.
 pub type Result<T> = std::result::Result<T, Error>;
 
+/// Errors returned by the Sourcify clients.
 #[derive(Debug, Error)]
 pub enum Error {
     #[error("HTTP request failed: {0}")]
@@ -18,10 +20,4 @@ pub enum Error {
 
     #[error("Invalid hash: {0}")]
     InvalidHash(String),
-
-    #[error("Contract not verified")]
-    NotVerified,
-
-    #[error("Verification failed: {0}")]
-    VerificationFailed(String),
 }

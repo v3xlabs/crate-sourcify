@@ -1,3 +1,5 @@
+//! Read-only Sourcify v2 API client.
+
 mod client;
 mod types;
 
