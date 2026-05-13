@@ -2,5 +2,7 @@
 name = "sourcify"
 version = "0.0.1"
 edition = "2024"
+description = "A lightweight sourcify wrapper for fetching ethereum smart contract source code"
+license = "LGPL-3.0"
 
 [dependencies]
