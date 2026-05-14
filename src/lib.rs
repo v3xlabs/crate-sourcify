@@ -6,8 +6,10 @@
 //! ## Supported APIs
 //!
 //! - [`v2::Client`] wraps the Sourcify v2 contract data API.
+//!   - [API Docs](https://docs.sourcify.dev/docs/api/#server-api-documentation)
 //!   - [OpenAPI](https://sourcify.dev/server/api-docs/swagger.json)
 //! - [`four_byte::Client`] wraps the Sourcify 4byte signature API.
+//!   - [API Docs](https://docs.sourcify.dev/docs/api/#4byte-signature-service-api-documentation)
 //!   - [OpenAPI](https://api.4byte.sourcify.dev/api-docs/swagger.json)
 //!
 //! ## Limitations
