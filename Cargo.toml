@@ -5,6 +5,7 @@ edition = "2021"
 description = "A lightweight wrapper for Sourcify and 4byte APIs for fetching Ethereum smart contract source code and signatures"
 license = "LGPL-3.0"
 repository = "https://github.com/v3xlabs/crate-sourcify"
+documentation = "https://docs.rs/sourcify"
 readme = "README.md"
 keywords = ["ethereum", "sourcify", "solidity", "abi", "4byte"]
 categories = ["api-bindings", "web-programming::http-client"]
