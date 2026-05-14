@@ -13,7 +13,7 @@
 //!   - [OpenAPI](https://api.4byte.sourcify.dev/api-docs/swagger.json)
 //!
 //! ## Limitations
-//! 
+//!
 //! The crate is intentionally small: use [`Sourcify::v2`] to retrieve verified
 //! contract data, source files, ABI, and metadata by chain ID and address, and
 //! use [`Sourcify::four_byte`] to resolve function selectors or event topics.

@@ -14,10 +14,12 @@
 
 ## Supported APIs
 
-- `sourcify::v2`: Sourcify v2 contract data API.
-  API docs: <https://sourcify.dev/server/api-docs/swagger.json>
-- `sourcify::four_byte`: Sourcify 4byte signature API.
-  API docs: <https://api.4byte.sourcify.dev/api-docs/swagger.json>
+- `v2`: Sourcify v2 contract data API.
+  - [API Docs](https://docs.sourcify.dev/docs/api/#server-api-documentation)
+  - [OpenAPI](https://sourcify.dev/server/api-docs/swagger.json)
+- `four_byte`: Sourcify 4byte signature API.
+  - [API Docs](https://docs.sourcify.dev/docs/api/#4byte-signature-service-api-documentation)
+  - [OpenAPI](https://api.4byte.sourcify.dev/api-docs/swagger.json)
 
 ## Quickstart
 
@@ -25,7 +27,7 @@
 
 ```toml
 [dependencies]
-sourcify = "0.0.2"
+sourcify = "0.0.4"
 ```
 
 ### Example
