@@ -4,6 +4,7 @@ use reqwest::Client as HttpClient;
 use std::fmt::Display;
 use std::sync::Arc;
 
+/// Read-only client for Sourcify v2 contract data endpoints.
 #[derive(Debug, Clone)]
 pub struct Client {
     http: Arc<HttpClient>,

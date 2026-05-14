@@ -1,34 +1,64 @@
 //! # sourcify
 //!
-//! A lightweight read-only wrapper for the Sourcify v2 API and Sourcify 4byte
-//! signature API.
+//! A lightweight read-only wrapper for [Sourcify](https://sourcify.dev),
+//! including the Sourcify v2 API and Sourcify 4byte signature API.
 //!
+//! ## Supported APIs
+//!
+//! - [`v2::Client`] wraps the Sourcify v2 contract data API.
+//!   - [OpenAPI](https://sourcify.dev/server/api-docs/swagger.json)
+//! - [`four_byte::Client`] wraps the Sourcify 4byte signature API.
+//!   - [OpenAPI](https://api.4byte.sourcify.dev/api-docs/swagger.json)
+//!
+//! ## Limitations
+//! 
 //! The crate is intentionally small: use [`Sourcify::v2`] to retrieve verified
 //! contract data, source files, ABI, and metadata by chain ID and address, and
 //! use [`Sourcify::four_byte`] to resolve function selectors or event topics.
 //!
-//! ## Quick Start
+//! ## Contract Source Lookup
 //!
-//! ```rust
-//! use sourcify::Sourcify;
+//! ```rust,no_run
+//! use sourcify::{v2, Sourcify};
 //!
 //! #[tokio::main]
-//! async fn main() -> Result<(), Box<dyn std::error::Error>> {
+//! async fn main() -> sourcify::Result<()> {
 //!     let client = Sourcify::new();
+//!     let contract = client
+//!         .v2()
+//!         .get_contract_with_fields(
+//!             1,
+//!             "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+//!             &[v2::field::SOURCES, v2::field::ABI, v2::field::METADATA],
+//!         )
+//!         .await?;
 //!
-//!     // Fetch contract metadata from a verified contract
-//!     let contract = client.v2().get_contract(
-//!         1,
-//!         "0x250b3e8E23d24C8b12dF5d0c4F62B2D1543E13b2",
-//!     ).await?;
-//!
-//!     if let Some(c) = contract {
-//!         println!("Contract verified: {}", c.address);
+//!     if let Some(contract) = contract {
+//!         println!("verified on chain {}", contract.chain_id);
 //!     }
 //!
 //!     Ok(())
 //! }
 //! ```
+//!
+//! ## 4byte Lookup
+//!
+//! ```rust,no_run
+//! use sourcify::Sourcify;
+//!
+//! #[tokio::main]
+//! async fn main() -> sourcify::Result<()> {
+//!     let client = Sourcify::new();
+//!     let signatures = client.four_byte().lookup_function("0xa9059cbb").await?;
+//!
+//!     for signature in signatures {
+//!         println!("{}", signature.name);
+//!     }
+//!
+//!     Ok(())
+//! }
+//! ```
+//!
 
 pub mod error;
 pub mod four_byte;

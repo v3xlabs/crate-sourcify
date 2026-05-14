@@ -1,4 +1,4 @@
-use sourcify::Sourcify;
+use sourcify::{v2, Sourcify};
 
 #[tokio::main]
 async fn main() -> sourcify::Result<()> {
@@ -10,7 +10,11 @@ async fn main() -> sourcify::Result<()> {
     let client = Sourcify::new();
     let contract = client
         .v2()
-        .get_contract_with_fields(chain_id, &address, &["sources", "abi", "metadata"])
+        .get_contract_with_fields(
+            chain_id,
+            &address,
+            &[v2::field::SOURCES, v2::field::ABI, v2::field::METADATA],
+        )
         .await?;
 
     match contract {
@@ -24,7 +28,13 @@ async fn main() -> sourcify::Result<()> {
             println!("has abi: {}", contract.abi.is_some());
             println!("has metadata: {}", contract.metadata.is_some());
 
-            println!("source files: {:?}", contract.sources.as_ref().map(|sources| sources.iter().next().map(|(_, x)|x.content.clone())));
+            println!(
+                "source files: {:?}",
+                contract
+                    .sources
+                    .as_ref()
+                    .map(|sources| sources.iter().next().map(|(_, x)| x.content.clone()))
+            );
         }
         None => println!("contract is not verified"),
     }

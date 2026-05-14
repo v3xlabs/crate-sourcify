@@ -3,6 +3,7 @@ use crate::{Error, Result};
 use reqwest::Client as HttpClient;
 use std::sync::Arc;
 
+/// Read-only client for Sourcify 4byte signature endpoints.
 #[derive(Debug, Clone)]
 pub struct Client {
     http: Arc<HttpClient>,
